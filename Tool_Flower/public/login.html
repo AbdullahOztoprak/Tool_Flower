@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login - Tool Flower</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, #f8ffae, #43c6ac);
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  position: sticky;
+  top: 0;
+  background-color: rgba(255,255,255,0.9);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  z-index: 999;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.8em;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #43c6ac;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.logo i {
+  margin-right: 10px;
+  font-size: 1.5em;
+}
+.logo span {
+  margin-right: 10px;
+}
+.logo:focus, .logo:hover {
+  color: #2d8f7b;
+  text-shadow: 0 2px 8px #43c6ac44;
+  outline: none;
+}
+.nav-buttons button {
+  background-color: #43c6ac;
+  border: none;
+  margin-left: 10px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.nav-buttons button:hover {
+  background: #f8ffae;
+  color: #43c6ac;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+  .login-container {
+    max-width: 400px;
+    margin: 80px auto;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.17);
+    padding: 40px 30px;
+    text-align: center;
+  }
+  input {
+    width: 80%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    background: #f0f0f0;
+    font-size: 16px;
+  }
+  button[type="submit"] {
+    width: 85%;
+    padding: 12px;
+    background: #43c6ac;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background 0.3s;
+  }
+  button[type="submit"]:hover {
+    background: #f8ffae;
+    color: #43c6ac;
+  }
+  .error {
+    color: #e74c3c;
+    margin-top: 15px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<!-- Header -->
+<!-- Header -->
+<div class="header">
+  <button class="logo" onclick="window.location.href='home.html'">
+    <span style="font-size:1.5em; margin-right:10px;">🌸</span> Tool Flower
+  </button>
+  <div class="nav-buttons">
+    <button onclick="window.location.href='index.html'">Home</button>
+  </div>
+</div>
+  <div class="login-container">
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+    <div id="error" class="error"></div>
+  </div>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('error');
+      let users = [
+        { name: 'flower', pass: 'petal123' },
+        { name: 'admin', pass: 'admin' },
+        { name: 'user', pass: 'user' },
+        { name: 'user123', pass: 'user123' }
+      ];
+      try {
+        const localUsers = JSON.parse(localStorage.getItem('toolFlowerUsers') || '[]');
+        users = users.concat(localUsers);
+      } catch {}
+      const found = users.find(u => u.name === username && u.pass === password);
+      if (found) {
+        localStorage.setItem('toolFlowerCurrentUser', username.trim());
+        window.location.href = 'home.html';
+      } else {
+        errorDiv.textContent = 'Invalid username or password!';
+      }
+    });
+  </script>
+</body>
+</html>

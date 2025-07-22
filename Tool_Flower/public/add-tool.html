@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Add Tool - Tool Flower</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, #f8ffae, #43c6ac);
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  position: sticky;
+  top: 0;
+  background-color: rgba(255,255,255,0.9);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  z-index: 999;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.8em;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #43c6ac;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.logo span {
+  margin-right: 10px;
+}
+
+.logo:focus, .logo:hover {
+  color: #2d8f7b;
+  text-shadow: 0 2px 8px #43c6ac44;
+  outline: none;
+}
+.nav-buttons button {
+  background-color: #43c6ac;
+  border: none;
+  margin-left: 10px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.nav-buttons button:hover {
+  background: #f8ffae;
+  color: #43c6ac;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.add-tool-container {
+  max-width: 500px;
+  margin: 60px auto;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.17);
+  padding: 40px 30px;
+}
+.add-tool-title {
+  color: #43c6ac;
+  font-size: 2em;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.add-tool-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #222;
+}
+.add-tool-form input, .add-tool-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 18px;
+  border: none;
+  border-radius: 8px;
+  background: #f0f0f0;
+  font-size: 16px;
+}
+.add-tool-form button {
+  width: 100%;
+  padding: 14px;
+  background: #43c6ac;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+  transition: background 0.3s;
+}
+.add-tool-form button:hover {
+  background: #f8ffae;
+  color: #43c6ac;
+}
+.success-msg {
+  color: #43c6ac;
+  margin-top: 15px;
+  font-size: 15px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <button class="logo" onclick="window.location.href='home.html'">
+    <span style="font-size:1.5em; margin-right:10px;">🌸</span> Tool Flower
+  </button>
+  <div class="nav-buttons">
+    <button onclick="window.location.href='home.html'">Home</button>
+    <button onclick="window.location.href='profile.html'">Profile</button>
+    <button onclick="window.location.href='login.html'">Logout</button>
+  </div>
+</div>
+<div class="add-tool-container">
+  <div class="add-tool-title">Add a New Tool</div>
+  <form class="add-tool-form" id="toolForm">
+    <label for="toolName">Tool Name</label>
+    <input type="text" id="toolName" required placeholder="Enter tool name" />
+    <label for="toolDesc">Description</label>
+    <textarea id="toolDesc" rows="3" required placeholder="Describe your tool"></textarea>
+    <label for="toolCode">Tool Code (JavaScript)</label>
+    <textarea id="toolCode" rows="5" required placeholder="Paste your JavaScript code here"></textarea>
+    <button type="submit">Add Tool</button>
+  </form>
+  <div id="successMsg" class="success-msg"></div>
+</div>
+<script>
+// Save tool to localStorage
+function getTools() {
+  return JSON.parse(localStorage.getItem('toolFlowerTools') || '[]');
+}
+function saveTools(tools) {
+  localStorage.setItem('toolFlowerTools', JSON.stringify(tools));
+}
+
+document.getElementById('toolForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name = document.getElementById('toolName').value.trim();
+  const desc = document.getElementById('toolDesc').value.trim();
+  const code = document.getElementById('toolCode').value.trim();
+  if (name && desc && code) {
+    const tools = getTools();
+    tools.push({ name, desc, code });
+    saveTools(tools);
+    document.getElementById('successMsg').textContent = 'Tool added successfully!';
+    document.getElementById('toolForm').reset();
+  }
+});
+</script>
+</body>
+</html>

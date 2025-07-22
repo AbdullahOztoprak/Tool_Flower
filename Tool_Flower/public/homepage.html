@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Flower Homepage</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .homepage {
+            margin-top: 60px;
+            text-align: center;
+        }
+        .flower {
+            font-size: 60px;
+            animation: bloom 2s infinite alternate;
+        }
+        @keyframes bloom {
+            0% { color: #43c6ac; }
+            100% { color: #f8ffae; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container homepage">
+        <div class="flower">🌸</div>
+        <h2>Tool Flower</h2>
+        <p>Welcome! Add your own tools and run them below.</p>
+        <div class="tool-form">
+            <input type="text" id="toolName" placeholder="Tool Name" required>
+            <textarea id="toolCode" rows="4" placeholder="Tool JavaScript code here..." required></textarea>
+            <button onclick="addTool(document.getElementById('toolName').value, document.getElementById('toolCode').value)">Add Tool</button>
+        </div>
+        <div id="toolList"></div>
+    </div>
+    <script src="tools.js"></script>
+</body>
+</html>
