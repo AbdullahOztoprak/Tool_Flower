@@ -240,19 +240,24 @@ function renderDiscoverTools() {
     container.innerHTML = '<div style="text-align:center; color:#888; font-size:1.2em; margin:30px 0;">No tools added yet. Be the first to add a tool!</div>';
     return;
   }
-  tools.forEach(tool => {
+  tools.forEach((tool, idx) => {
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `
       <i class="fas fa-lightbulb"></i>
       <h3>${tool.name}</h3>
-      <p>${tool.desc}</p>
-      <button style="margin-top:10px; background:#43c6ac; color:#fff; border:none; border-radius:6px; padding:8px 18px; cursor:pointer; font-weight:600;" onclick="try { eval(\`${tool.code.replace(/`/g, '\`')}\`); } catch(e) { alert('Error running tool: ' + e.message); }">Run Tool</button>
+      <p><strong>Description:</strong> ${tool.desc}</p>
+      <pre style="background:#f8ffae33; color:#222; padding:10px; border-radius:6px; margin:10px 0; font-size:0.95em; text-align:left; overflow-x:auto;"><strong>Code:</strong>\n${tool.code}</pre>
+      <div style="display:flex; gap:10px; justify-content:center;">
+        <button style="background:#43c6ac; color:#fff; border:none; border-radius:6px; padding:8px 18px; cursor:pointer; font-weight:600;" onclick="window.location.href='run-tool.html?idx=${idx}'">Run Tool</button>
+        <button style="background:#f8ffae; color:#43c6ac; border:none; border-radius:6px; padding:8px 18px; cursor:pointer; font-weight:600;" onclick="window.location.href='edit-tool.html?idx=${idx}'">Edit</button>
+      </div>
     `;
     container.appendChild(card);
   });
 }
 window.addEventListener('DOMContentLoaded', renderDiscoverTools);
+// No longer needed: editTool function handled by edit-tool.html
 </script>
 
 </body>

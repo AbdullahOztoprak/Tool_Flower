@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Run Tool - Tool Flower</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, #f8ffae, #43c6ac);
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  position: sticky;
+  top: 0;
+  background-color: rgba(255,255,255,0.9);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  z-index: 999;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.8em;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #43c6ac;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.logo span {
+  margin-right: 10px;
+}
+.logo:focus, .logo:hover {
+  color: #2d8f7b;
+  text-shadow: 0 2px 8px #43c6ac44;
+  outline: none;
+}
+.nav-buttons button {
+  background-color: #43c6ac;
+  border: none;
+  margin-left: 10px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.nav-buttons button:hover {
+  background: #f8ffae;
+  color: #43c6ac;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.run-tool-container {
+  max-width: 500px;
+  margin: 60px auto;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.17);
+  padding: 40px 30px;
+}
+.run-tool-title {
+  color: #43c6ac;
+  font-size: 2em;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.run-tool-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #222;
+}
+.run-tool-form input, .run-tool-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 18px;
+  border: none;
+  border-radius: 8px;
+  background: #f0f0f0;
+  font-size: 16px;
+}
+.run-tool-form button {
+  width: 100%;
+  padding: 14px;
+  background: #43c6ac;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+  transition: background 0.3s;
+}
+.run-tool-form button:hover {
+  background: #f8ffae;
+  color: #43c6ac;
+}
+.success-msg {
+  color: #43c6ac;
+  margin-top: 15px;
+  font-size: 15px;
+  text-align: center;
+}
+pre {
+  background: #f8ffae33;
+  color: #222;
+  padding: 10px;
+  border-radius: 6px;
+  margin: 10px 0;
+  font-size: 0.95em;
+  text-align: left;
+  overflow-x: auto;
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <button class="logo" onclick="window.location.href='home.html'">
+    <span style="font-size:1.5em; margin-right:10px;">🌸</span> Tool Flower
+  </button>
+  <div class="nav-buttons">
+    <button onclick="window.location.href='home.html'">Home</button>
+    <button onclick="window.location.href='profile.html'">Profile</button>
+    <button onclick="window.location.href='login.html'">Logout</button>
+  </div>
+</div>
+<div class="run-tool-container">
+  <div class="run-tool-title">Run Tool on Remote Device</div>
+  <div id="toolInfo"></div>
+  <form class="run-tool-form" id="runToolForm">
+    <label for="sshUser">SSH Username</label>
+    <input type="text" id="sshUser" required placeholder="e.g. debianuser" />
+    <label for="sshHost">SSH Host/IP</label>
+    <input type="text" id="sshHost" required placeholder="e.g. 192.168.1.100" />
+    <label for="scriptSource">Script Source</label>
+    <select id="scriptSource" required>
+      <option value="code.siemens">code.siemens</option>
+      <option value="github">GitHub</option>
+      <option value="upload">Upload File</option>
+      <option value="custom">Write Script</option>
+    </select>
+    <div id="gitFields">
+      <label for="repoUrl">Repository URL</label>
+      <input type="text" id="repoUrl" placeholder="e.g. https://code.siemens.com/your/repo.git" />
+      <label for="repoPath">Script Path in Repo</label>
+      <input type="text" id="repoPath" placeholder="e.g. setup.sh" />
+    </div>
+    <div id="uploadField" style="display:none;">
+      <label for="scriptFile">Upload Script File</label>
+      <input type="file" id="scriptFile" accept=".sh,.py,.pl,.rb,.js,.bat,.ps1,.txt" />
+    </div>
+    <div id="customField" style="display:none;">
+      <label for="customScript">Write Script</label>
+      <textarea id="customScript" rows="6" placeholder="#!/bin/bash\necho Hello"></textarea>
+    </div>
+    <label for="sshPath">Target Directory on VM (where script will run)</label>
+    <input type="text" id="sshPath" required placeholder="e.g. /home/debianuser/scripts" />
+    <button type="submit">Run Tool</button>
+  </form>
+  <div id="successMsg" class="success-msg"></div>
+  <pre id="outputMsg"></pre>
+</div>
+<script>
+function getTools() {
+  return JSON.parse(localStorage.getItem('toolFlowerTools') || '[]');
+}
+function getQueryParam(name) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+const idx = getQueryParam('idx');
+const tools = getTools();
+if (idx === null || !tools[idx]) {
+  document.getElementById('runToolForm').style.display = 'none';
+  document.getElementById('successMsg').textContent = 'Tool not found.';
+} else {
+  const tool = tools[idx];
+  document.getElementById('toolInfo').innerHTML = `
+    <h3>${tool.name}</h3>
+    <p><strong>Description:</strong> ${tool.desc}</p>
+    <pre><strong>Code:</strong>\n${tool.code}</pre>
+  `;
+
+  // Show/hide fields based on script source
+  const scriptSource = document.getElementById('scriptSource');
+  const gitFields = document.getElementById('gitFields');
+  const uploadField = document.getElementById('uploadField');
+  const customField = document.getElementById('customField');
+  scriptSource.addEventListener('change', function() {
+    const repoUrlInput = document.getElementById('repoUrl');
+    if (this.value === 'code.siemens') {
+      gitFields.style.display = '';
+      uploadField.style.display = 'none';
+      customField.style.display = 'none';
+      repoUrlInput.placeholder = 'e.g. https://code.siemens.com/your/repo.git';
+    } else if (this.value === 'github') {
+      gitFields.style.display = '';
+      uploadField.style.display = 'none';
+      customField.style.display = 'none';
+      repoUrlInput.placeholder = 'e.g. https://github.com/your/repo.git';
+    } else if (this.value === 'upload') {
+      gitFields.style.display = 'none';
+      uploadField.style.display = '';
+      customField.style.display = 'none';
+    } else if (this.value === 'custom') {
+      gitFields.style.display = 'none';
+      uploadField.style.display = 'none';
+      customField.style.display = '';
+    }
+  });
+  // Default to gitFields
+  gitFields.style.display = '';
+  uploadField.style.display = 'none';
+  customField.style.display = 'none';
+  // Set initial placeholder for repoUrl
+  document.getElementById('repoUrl').placeholder = 'e.g. https://code.siemens.com/your/repo.git';
+
+  document.getElementById('runToolForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const sshUser = document.getElementById('sshUser').value.trim();
+    const sshHost = document.getElementById('sshHost').value.trim();
+    const sshPath = document.getElementById('sshPath').value.trim();
+    const source = scriptSource.value;
+    const repoUrl = document.getElementById('repoUrl').value.trim();
+    const repoPath = document.getElementById('repoPath').value.trim();
+    const customScript = document.getElementById('customScript').value.trim();
+    const scriptFile = document.getElementById('scriptFile').files[0];
+    document.getElementById('successMsg').textContent = '';
+    document.getElementById('outputMsg').textContent = '';
+    let body = {
+      idx: Number(idx),
+      sshUser,
+      sshHost,
+      sshPath,
+      source,
+      repoUrl,
+      repoPath,
+      customScript
+    };
+    if (source === 'upload' && scriptFile) {
+      // Use FormData for file upload
+      const formData = new FormData();
+      for (const key in body) formData.append(key, body[key]);
+      formData.append('scriptFile', scriptFile);
+      var res = await fetch('/api/run', {
+        method: 'POST',
+        body: formData
+      });
+    } else {
+      var res = await fetch('/api/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+    }
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById('successMsg').textContent = 'Tool executed!';
+      document.getElementById('outputMsg').textContent = data.output || '';
+    } else {
+      document.getElementById('successMsg').textContent = 'Error running tool.';
+      document.getElementById('outputMsg').textContent = data.error || '';
+    }
+  });
+}
+</script>
+</body>
+</html>
