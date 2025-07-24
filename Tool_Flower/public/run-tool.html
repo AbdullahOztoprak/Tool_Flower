@@ -144,8 +144,15 @@ pre {
     <button onclick="window.location.href='login.html'">Logout</button>
   </div>
 </div>
+<!-- Return button moved inside the white box -->
 <div class="run-tool-container">
-  <div class="run-tool-title">Run Tool on Remote Device</div>
+  <div style="display:flex;align-items:center;justify-content:flex-start;position:relative;">
+    <button onclick="window.history.back()" id="returnBtn" style="background:#f8ffae;color:#43c6ac;border:none;border-radius:50%;padding:3px 7px;font-weight:600;cursor:pointer;font-size:1.1em;box-shadow:0 1px 4px #43c6ac22;min-width:28px;min-height:28px;display:flex;align-items:center;justify-content:center;">
+      <i class="fa fa-arrow-left"></i>
+    </button>
+    <span style="display:inline-block;width:16px;"></span>
+    <div class="run-tool-title" style="margin:0;">Run Tool on Remote Device</div>
+  </div>
   <div id="toolInfo"></div>
   <form class="run-tool-form" id="runToolForm">
     <label for="sshUser">SSH Username</label>
@@ -274,6 +281,18 @@ if (idx === null || !tools[idx]) {
     <p><strong>Description:</strong> ${tool.desc}</p>
     <pre><strong>Code:</strong>\n${tool.code}</pre>
   `;
+
+  // Auto-fill repoUrl and repoPath if present in tool object
+  if (tool.repoUrl) {
+    document.getElementById('repoUrl').value = tool.repoUrl;
+  } else if (tool.url) {
+    document.getElementById('repoUrl').value = tool.url;
+  }
+  if (tool.repoPath) {
+    document.getElementById('repoPath').value = tool.repoPath;
+  } else if (tool.path) {
+    document.getElementById('repoPath').value = tool.path;
+  }
 
   // Show/hide fields based on script source
   const scriptSource = document.getElementById('scriptSource');

@@ -243,11 +243,12 @@ function renderDiscoverTools() {
   tools.forEach((tool, idx) => {
     const card = document.createElement('div');
     card.className = 'card';
+    card.style.position = 'relative';
     card.innerHTML = `
+      <button class="delete-tool-btn" title="Delete Tool" style="position:absolute; top:10px; right:10px; background:none; border:none; color:#e74c3c; font-size:0.95em; cursor:pointer; z-index:2; padding:0;" onclick="deleteTool(${idx})"><i class='fas fa-trash' style="color:#e74c3c; font-size:1em;"></i></button>
       <i class="fas fa-lightbulb"></i>
       <h3>${tool.name}</h3>
       <p><strong>Description:</strong> ${tool.desc}</p>
-      <pre style="background:#f8ffae33; color:#222; padding:10px; border-radius:6px; margin:10px 0; font-size:0.95em; text-align:left; overflow-x:auto;"><strong>Code:</strong>\n${tool.code}</pre>
       <div style="display:flex; gap:10px; justify-content:center;">
         <button style="background:#43c6ac; color:#fff; border:none; border-radius:6px; padding:8px 18px; cursor:pointer; font-weight:600;" onclick="window.location.href='run-tool.html?idx=${idx}'">Run Tool</button>
         <button style="background:#f8ffae; color:#43c6ac; border:none; border-radius:6px; padding:8px 18px; cursor:pointer; font-weight:600;" onclick="window.location.href='edit-tool.html?idx=${idx}'">Edit</button>
@@ -255,6 +256,15 @@ function renderDiscoverTools() {
     `;
     container.appendChild(card);
   });
+
+// Delete tool function
+window.deleteTool = function(idx) {
+  if (!confirm('Are you sure you want to delete this tool?')) return;
+  const tools = getTools();
+  tools.splice(idx, 1);
+  localStorage.setItem('toolFlowerTools', JSON.stringify(tools));
+  renderDiscoverTools();
+}
 }
 window.addEventListener('DOMContentLoaded', renderDiscoverTools);
 // No longer needed: editTool function handled by edit-tool.html
