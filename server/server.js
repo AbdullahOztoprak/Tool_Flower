@@ -34,11 +34,11 @@ app.get('/api/tools', (req, res) => {
     res.json(tools);
 });
 
-// Run a tool by index
+// Run a tool by command (sent from frontend)
 app.post('/api/run', (req, res) => {
-    const { idx } = req.body;
-    if (typeof idx !== 'number' || !tools[idx]) return res.status(400).json({ error: 'Invalid tool index' });
-    exec(tools[idx].command, (error, stdout, stderr) => {
+    const { command } = req.body;
+    if (!command) return res.status(400).json({ error: 'No command provided' });
+    exec(command, (error, stdout, stderr) => {
         if (error) return res.json({ error: stderr });
         res.json({ output: stdout });
     });

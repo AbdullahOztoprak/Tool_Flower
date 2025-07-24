@@ -221,7 +221,9 @@ document.getElementById('toolForm').addEventListener('submit', function(e) {
   const customScript = document.getElementById('customScript').value.trim();
   const scriptFile = document.getElementById('scriptFile').files[0];
   if (!name || !desc) return;
-  let tool = { name, desc, source, repoUrl, repoPath, customScript };
+  // Generate a unique id for the tool
+  const id = 'tool_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+  let tool = { id, name, desc, source, repoUrl, repoPath, customScript };
   // Save file name if uploaded
   if (source === 'upload' && scriptFile) {
     tool.uploadedFileName = scriptFile.name;
