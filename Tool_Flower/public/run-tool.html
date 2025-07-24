@@ -161,9 +161,12 @@ pre {
     <input type="hidden" id="sshHost" value="localhost" />
     <div style="margin-bottom:18px; margin-top:8px;">
       <label for="sshPubKey" style="display:inline-block;">Your SSH Public Key</label>
-      <button type="button" id="sshKeyInfoBtn" style="background:none; border:none; color:#43c6ac; font-size:1.1em; cursor:pointer; margin-left:5px; vertical-align:middle;" title="How to generate and use SSH keys?">
-        <i class="fa fa-info-circle"></i>
-      </button>
+      <div style="display:flex; justify-content:center; margin:8px 0 6px 0;">
+        <button type="button" id="sshKeyInfoBtn" style="background:none; border:none; color:#43c6ac; font-size:1.1em; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="How to generate and use SSH keys?">
+          <i class="fa fa-info-circle"></i>
+          <span style="font-size:0.98em; color:#43c6ac; text-decoration:underline dotted;">Info</span>
+        </button>
+      </div>
       <textarea id="sshPubKey" rows="3" placeholder="Paste your public key here (e.g. ssh-rsa ...)"></textarea>
     </div>
     <button type="button" id="testSshBtn" style="background:#f8ffae; color:#43c6ac; margin-bottom:10px; margin-top:5px;">Test Connection</button>
@@ -179,6 +182,8 @@ pre {
     <div id="gitFields">
       <label for="repoUrl">Repository URL</label>
       <input type="text" id="repoUrl" placeholder="e.g. https://code.siemens.com/your/repo.git" />
+      <label for="branchName">Branch Name (optional)</label>
+      <input type="text" id="branchName" placeholder="e.g. develop or feature/my-branch" />
       <label for="repoPath">Script Path in Repo</label>
       <input type="text" id="repoPath" placeholder="e.g. setup.sh" />
     </div>
@@ -195,20 +200,25 @@ pre {
     <!-- Removed duplicate SSH Public Key section -->
     <!-- Info Modal -->
     <div id="sshKeyInfoModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center;">
-      <div style="background:#fff; border-radius:12px; max-width:420px; margin:auto; padding:28px 24px; box-shadow:0 8px 32px rgba(31,38,135,0.17); position:relative;">
-        <button id="closeSshKeyInfoModal" style="position:absolute; top:10px; right:14px; background:none; border:none; font-size:1.3em; color:#888; cursor:pointer;">&times;</button>
-        <h3 style="color:#43c6ac; margin-top:0;">How to Generate and Use SSH Keys</h3>
+      <div style="background:#fff; border-radius:12px; max-width:420px; margin:auto; padding:28px 24px 18px 24px; box-shadow:0 8px 32px rgba(31,38,135,0.17); position:relative;">
+        <button id="closeSshKeyInfoModal" style="position:absolute; left:50%; transform:translateX(-50%); top:8px; background:none; border:none; font-size:1.5em; color:#888; cursor:pointer;">&times;</button>
+        <h3 style="color:#43c6ac; margin-top:32px; text-align:center;">How to Generate and Use SSH Keys</h3>
         <ol style="font-size:1em; color:#333; padding-left:18px;">
-          <li>Open a terminal (or PowerShell on Windows).</li>
-          <li>Run: <code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code></li>
-          <li>Press Enter to accept the default file location.</li>
-          <li>When prompted, set a passphrase (optional, but recommended).</li>
-          <li>Your public key will be in <code>~/.ssh/id_rsa.pub</code> (or <code>C:\Users\\YourName\\.ssh\\id_rsa.pub</code> on Windows).</li>
-          <li>Copy the contents of the <b>public key</b> file and paste it into the field above.</li>
-          <li>On your VM/server, add the public key to <code>~/.ssh/authorized_keys</code> (create the file if it doesn't exist).</li>
+          <li><b>Open a terminal</b> (or PowerShell on Windows).</li>
+          <li><b>Run this command:</b><br><pre style="background:#f8ffae33; padding:7px 10px; border-radius:6px; margin:7px 0; font-size:1em;"><code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code></pre></li>
+          <li>When prompted for a file location, just press <b>Enter</b> to accept the default.</li>
+          <li>When prompted for a passphrase, you can set one (recommended) or leave it empty for no passphrase.</li>
+          <li>Your <b>public key</b> will be saved as:<br>
+            <pre style="background:#f8ffae33; padding:7px 10px; border-radius:6px; margin:7px 0; font-size:1em;"><code>~/.ssh/id_rsa.pub</code> (Linux/Mac)
+<code>C:\Users\\YourName\\.ssh\\id_rsa.pub</code> (Windows)</pre>
+          </li>
+          <li><b>Copy the entire contents</b> of the <code>id_rsa.pub</code> file and paste it into the "Your SSH Public Key" field above.</li>
+          <li>On your VM/server, <b>append</b> your public key to <code>~/.ssh/authorized_keys</code> (create the file if it doesn't exist):<br>
+            <pre style="background:#f8ffae33; padding:7px 10px; border-radius:6px; margin:7px 0; font-size:1em;"><code>cat ~/path/to/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys</code></pre>
+          </li>
         </ol>
         <div style="background:#f8ffae33; color:#222; padding:10px; border-radius:6px; font-size:0.97em; margin-top:10px;">
-          <b>Tip:</b> Never share your private key (<code>id_rsa</code>), only the public key (<code>id_rsa.pub</code>).
+          <b>Important:</b> <span style="color:#e74c3c;">Never share your private key (<code>id_rsa</code>)</span>. Only share your <b>public key</b> (<code>id_rsa.pub</code>).
         </div>
       </div>
     </div>
@@ -276,10 +286,14 @@ if (idx === null || !tools[idx]) {
   document.getElementById('successMsg').textContent = 'Tool not found.';
 } else {
   const tool = tools[idx];
+  let codeSection = '';
+  if (tool.code && tool.code !== 'undefined') {
+    codeSection = `<pre><strong>Code:</strong>\n${tool.code}</pre>`;
+  }
   document.getElementById('toolInfo').innerHTML = `
     <h3>${tool.name}</h3>
     <p><strong>Description:</strong> ${tool.desc}</p>
-    <pre><strong>Code:</strong>\n${tool.code}</pre>
+    ${codeSection}
   `;
 
   // Auto-fill repoUrl and repoPath if present in tool object
@@ -338,6 +352,7 @@ if (idx === null || !tools[idx]) {
     const repoPath = document.getElementById('repoPath').value.trim();
     const customScript = document.getElementById('customScript').value.trim();
     const scriptFile = document.getElementById('scriptFile').files[0];
+    const branchName = document.getElementById('branchName') ? document.getElementById('branchName').value.trim() : '';
     document.getElementById('successMsg').textContent = '';
     document.getElementById('outputMsg').textContent = '';
     let body = {
@@ -348,6 +363,7 @@ if (idx === null || !tools[idx]) {
       source,
       repoUrl,
       repoPath,
+      branchName,
       customScript
     };
     if (source === 'upload' && scriptFile) {
