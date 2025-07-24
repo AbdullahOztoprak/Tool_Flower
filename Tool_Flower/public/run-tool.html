@@ -279,13 +279,13 @@ function getQueryParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
 }
-const idx = getQueryParam('idx');
+const id = getQueryParam('id');
 const tools = getTools();
-if (idx === null || !tools[idx]) {
+const tool = tools.find(t => t.id === id);
+if (!id || !tool) {
   document.getElementById('runToolForm').style.display = 'none';
   document.getElementById('successMsg').textContent = 'Tool not found.';
 } else {
-  const tool = tools[idx];
   let codeSection = '';
   if (tool.code && tool.code !== 'undefined') {
     codeSection = `<pre><strong>Code:</strong>\n${tool.code}</pre>`;
@@ -355,33 +355,34 @@ if (idx === null || !tools[idx]) {
     const branchName = document.getElementById('branchName') ? document.getElementById('branchName').value.trim() : '';
     document.getElementById('successMsg').textContent = '';
     document.getElementById('outputMsg').textContent = '';
+
+    // Build the command to send to the backend
+    let command = '';
+    if (source === 'custom' && customScript) {
+      command = customScript;
+    } else if (source === 'github' || source === 'code.siemens') {
+      // Example: git clone and run script
+      command = `git clone ${repoUrl} repo && cd repo && chmod +x ${repoPath} && ./${repoPath}`;
+      if (branchName) {
+        command = `git clone -b ${branchName} ${repoUrl} repo && cd repo && chmod +x ${repoPath} && ./${repoPath}`;
+      }
+    } else if (source === 'upload' && scriptFile) {
+      // For uploads, backend would need to handle file upload, skipping for now
+      command = '';
+    }
+
     let body = {
-      idx: Number(idx),
+      command,
       sshUser,
       sshHost,
-      sshPath,
-      source,
-      repoUrl,
-      repoPath,
-      branchName,
-      customScript
+      sshPath
     };
-    if (source === 'upload' && scriptFile) {
-      // Use FormData for file upload
-      const formData = new FormData();
-      for (const key in body) formData.append(key, body[key]);
-      formData.append('scriptFile', scriptFile);
-      var res = await fetch(`${backendUrl}/api/run`, {
-        method: 'POST',
-        body: formData
-      });
-    } else {
-      var res = await fetch(`${backendUrl}/api/run`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-    }
+
+    var res = await fetch(`${backendUrl}/api/run`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
     const data = await res.json();
     if (res.ok) {
       document.getElementById('successMsg').textContent = 'Tool executed!';
