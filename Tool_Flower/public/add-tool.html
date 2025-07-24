@@ -137,8 +137,27 @@ body {
     <input type="text" id="toolName" required placeholder="Enter tool name" />
     <label for="toolDesc">Description</label>
     <textarea id="toolDesc" rows="3" required placeholder="Describe your tool"></textarea>
-    <label for="toolCode">Tool Code (JavaScript)</label>
-    <textarea id="toolCode" rows="5" required placeholder="Paste your JavaScript code here"></textarea>
+    <label for="scriptSource">Script Source</label>
+    <select id="scriptSource" required>
+      <option value="code.siemens">code.siemens</option>
+      <option value="github">GitHub</option>
+      <option value="upload">Upload File</option>
+      <option value="custom">Write Script</option>
+    </select>
+    <div id="gitFields">
+      <label for="repoUrl">Repository URL</label>
+      <input type="text" id="repoUrl" placeholder="e.g. https://code.siemens.com/your/repo.git" />
+      <label for="repoPath">Script Path in Repo</label>
+      <input type="text" id="repoPath" placeholder="e.g. setup.sh" />
+    </div>
+    <div id="uploadField" style="display:none;">
+      <label for="scriptFile">Upload Script File</label>
+      <input type="file" id="scriptFile" accept=".sh,.py,.pl,.rb,.js,.bat,.ps1,.txt" />
+    </div>
+    <div id="customField" style="display:none;">
+      <label for="customScript">Write Script</label>
+      <textarea id="customScript" rows="6" placeholder="#!/bin/bash\necho Hello"></textarea>
+    </div>
     <button type="submit">Add Tool</button>
   </form>
   <div id="successMsg" class="success-msg"></div>
@@ -152,18 +171,65 @@ function saveTools(tools) {
   localStorage.setItem('toolFlowerTools', JSON.stringify(tools));
 }
 
+// Show/hide fields based on script source
+const scriptSource = document.getElementById('scriptSource');
+const gitFields = document.getElementById('gitFields');
+const uploadField = document.getElementById('uploadField');
+const customField = document.getElementById('customField');
+scriptSource.addEventListener('change', function() {
+  const repoUrlInput = document.getElementById('repoUrl');
+  if (this.value === 'code.siemens') {
+    gitFields.style.display = '';
+    uploadField.style.display = 'none';
+    customField.style.display = 'none';
+    repoUrlInput.placeholder = 'e.g. https://code.siemens.com/your/repo.git';
+  } else if (this.value === 'github') {
+    gitFields.style.display = '';
+    uploadField.style.display = 'none';
+    customField.style.display = 'none';
+    repoUrlInput.placeholder = 'e.g. https://github.com/your/repo.git';
+  } else if (this.value === 'upload') {
+    gitFields.style.display = 'none';
+    uploadField.style.display = '';
+    customField.style.display = 'none';
+  } else if (this.value === 'custom') {
+    gitFields.style.display = 'none';
+    uploadField.style.display = 'none';
+    customField.style.display = '';
+  }
+});
+// Default to gitFields
+gitFields.style.display = '';
+uploadField.style.display = 'none';
+customField.style.display = 'none';
+document.getElementById('repoUrl').placeholder = 'e.g. https://code.siemens.com/your/repo.git';
+
 document.getElementById('toolForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const name = document.getElementById('toolName').value.trim();
   const desc = document.getElementById('toolDesc').value.trim();
-  const code = document.getElementById('toolCode').value.trim();
-  if (name && desc && code) {
-    const tools = getTools();
-    tools.push({ name, desc, code });
-    saveTools(tools);
-    document.getElementById('successMsg').textContent = 'Tool added successfully!';
-    document.getElementById('toolForm').reset();
+  const source = scriptSource.value;
+  const repoUrl = document.getElementById('repoUrl').value.trim();
+  const repoPath = document.getElementById('repoPath').value.trim();
+  const customScript = document.getElementById('customScript').value.trim();
+  const scriptFile = document.getElementById('scriptFile').files[0];
+  if (!name || !desc) return;
+  let tool = { name, desc, source, repoUrl, repoPath, customScript };
+  // Save file name if uploaded
+  if (source === 'upload' && scriptFile) {
+    tool.uploadedFileName = scriptFile.name;
+    // Optionally, you could save the file content as base64 if needed
   }
+  const tools = getTools();
+  tools.push(tool);
+  saveTools(tools);
+  document.getElementById('successMsg').textContent = 'Tool added successfully!';
+  document.getElementById('toolForm').reset();
+  // Reset fields to default
+  gitFields.style.display = '';
+  uploadField.style.display = 'none';
+  customField.style.display = 'none';
+  document.getElementById('repoUrl').placeholder = 'e.g. https://code.siemens.com/your/repo.git';
 });
 </script>
 </body>

@@ -111,10 +111,15 @@ body {
   color: #43c6ac;
 }
 .success-msg {
-  color: #43c6ac;
   margin-top: 15px;
   font-size: 15px;
   text-align: center;
+}
+.success-msg.success {
+  color: #2ecc40;
+}
+.success-msg.error {
+  color: #e74c3c;
 }
 pre {
   background: #f8ffae33;
@@ -144,9 +149,19 @@ pre {
   <div id="toolInfo"></div>
   <form class="run-tool-form" id="runToolForm">
     <label for="sshUser">SSH Username</label>
-    <input type="text" id="sshUser" required placeholder="e.g. debianuser" />
-    <label for="sshHost">SSH Host/IP</label>
-    <input type="text" id="sshHost" required placeholder="e.g. 192.168.1.100" />
+    <input type="text" id="sshUser" required placeholder="e.g. abdu" />
+    <!-- SSH Host/IP is now fixed to localhost and hidden from user -->
+    <input type="hidden" id="sshHost" value="localhost" />
+    <div style="margin-bottom:18px; margin-top:8px;">
+      <label for="sshPubKey" style="display:inline-block;">Your SSH Public Key</label>
+      <button type="button" id="sshKeyInfoBtn" style="background:none; border:none; color:#43c6ac; font-size:1.1em; cursor:pointer; margin-left:5px; vertical-align:middle;" title="How to generate and use SSH keys?">
+        <i class="fa fa-info-circle"></i>
+      </button>
+      <textarea id="sshPubKey" rows="3" placeholder="Paste your public key here (e.g. ssh-rsa ...)"></textarea>
+    </div>
+    <button type="button" id="testSshBtn" style="background:#f8ffae; color:#43c6ac; margin-bottom:10px; margin-top:5px;">Test Connection</button>
+    <div id="successMsg" class="success-msg"></div>
+    <pre id="outputMsg"></pre>
     <label for="scriptSource">Script Source</label>
     <select id="scriptSource" required>
       <option value="code.siemens">code.siemens</option>
@@ -170,12 +185,76 @@ pre {
     </div>
     <label for="sshPath">Target Directory on VM (where script will run)</label>
     <input type="text" id="sshPath" required placeholder="e.g. /home/debianuser/scripts" />
+    <!-- Removed duplicate SSH Public Key section -->
+    <!-- Info Modal -->
+    <div id="sshKeyInfoModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center;">
+      <div style="background:#fff; border-radius:12px; max-width:420px; margin:auto; padding:28px 24px; box-shadow:0 8px 32px rgba(31,38,135,0.17); position:relative;">
+        <button id="closeSshKeyInfoModal" style="position:absolute; top:10px; right:14px; background:none; border:none; font-size:1.3em; color:#888; cursor:pointer;">&times;</button>
+        <h3 style="color:#43c6ac; margin-top:0;">How to Generate and Use SSH Keys</h3>
+        <ol style="font-size:1em; color:#333; padding-left:18px;">
+          <li>Open a terminal (or PowerShell on Windows).</li>
+          <li>Run: <code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code></li>
+          <li>Press Enter to accept the default file location.</li>
+          <li>When prompted, set a passphrase (optional, but recommended).</li>
+          <li>Your public key will be in <code>~/.ssh/id_rsa.pub</code> (or <code>C:\Users\\YourName\\.ssh\\id_rsa.pub</code> on Windows).</li>
+          <li>Copy the contents of the <b>public key</b> file and paste it into the field above.</li>
+          <li>On your VM/server, add the public key to <code>~/.ssh/authorized_keys</code> (create the file if it doesn't exist).</li>
+        </ol>
+        <div style="background:#f8ffae33; color:#222; padding:10px; border-radius:6px; font-size:0.97em; margin-top:10px;">
+          <b>Tip:</b> Never share your private key (<code>id_rsa</code>), only the public key (<code>id_rsa.pub</code>).
+        </div>
+      </div>
+    </div>
     <button type="submit">Run Tool</button>
   </form>
-  <div id="successMsg" class="success-msg"></div>
-  <pre id="outputMsg"></pre>
 </div>
 <script>
+// SSH Key Info Modal logic
+document.getElementById('sshKeyInfoBtn').addEventListener('click', function() {
+  document.getElementById('sshKeyInfoModal').style.display = 'flex';
+});
+document.getElementById('closeSshKeyInfoModal').addEventListener('click', function() {
+  document.getElementById('sshKeyInfoModal').style.display = 'none';
+});
+// Backend base URL
+const backendUrl = 'http://localhost:3000';
+// Test SSH connection
+document.getElementById('testSshBtn').addEventListener('click', async function() {
+  const sshUser = document.getElementById('sshUser').value.trim();
+  const sshHost = document.getElementById('sshHost').value.trim(); // always 'localhost'
+  const successMsg = document.getElementById('successMsg');
+  const outputMsg = document.getElementById('outputMsg');
+  successMsg.textContent = '';
+  outputMsg.textContent = '';
+  successMsg.classList.remove('success', 'error');
+  if (!sshUser) {
+    successMsg.textContent = 'Please enter SSH username.';
+    successMsg.classList.add('error');
+    return;
+  }
+  successMsg.textContent = 'Testing connection...';
+  try {
+    const res = await fetch(`${backendUrl}/api/ssh-test`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sshUser, sshHost })
+    });
+    const data = await res.json();
+    if (res.ok && data.output) {
+      successMsg.textContent = 'SSH connection successful!';
+      successMsg.classList.add('success');
+      outputMsg.textContent = data.output;
+    } else {
+      successMsg.textContent = 'SSH connection failed.';
+      successMsg.classList.add('error');
+      outputMsg.textContent = data.error || 'Unknown error.';
+    }
+  } catch (err) {
+    successMsg.textContent = 'SSH connection failed.';
+    successMsg.classList.add('error');
+    outputMsg.textContent = err.message;
+  }
+});
 function getTools() {
   return JSON.parse(localStorage.getItem('toolFlowerTools') || '[]');
 }
@@ -257,12 +336,12 @@ if (idx === null || !tools[idx]) {
       const formData = new FormData();
       for (const key in body) formData.append(key, body[key]);
       formData.append('scriptFile', scriptFile);
-      var res = await fetch('/api/run', {
+      var res = await fetch(`${backendUrl}/api/run`, {
         method: 'POST',
         body: formData
       });
     } else {
-      var res = await fetch('/api/run', {
+      var res = await fetch(`${backendUrl}/api/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
