@@ -211,13 +211,14 @@ function getQueryParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
 }
-const idx = getQueryParam('idx');
-const tools = getTools();
-if (idx === null || !tools[idx]) {
+const id = getQueryParam('id');
+let tools = getTools();
+const toolIndex = tools.findIndex(t => t.id === id);
+if (!id || toolIndex === -1) {
   document.getElementById('editToolForm').style.display = 'none';
   document.getElementById('successMsg').textContent = 'Tool not found.';
 } else {
-  const tool = tools[idx];
+  const tool = tools[toolIndex];
   document.getElementById('toolName').value = tool.name || '';
   document.getElementById('toolDesc').value = tool.desc || '';
   document.getElementById('scriptSource').value = tool.source || 'code.siemens';
@@ -235,11 +236,11 @@ if (idx === null || !tools[idx]) {
     const customScript = document.getElementById('customScript').value.trim();
     const scriptFile = document.getElementById('scriptFile').files[0];
     if (!name || !desc) return;
-    let updatedTool = { name, desc, source, repoUrl, repoPath, customScript };
+    let updatedTool = { ...tool, name, desc, source, repoUrl, repoPath, customScript };
     if (source === 'upload' && scriptFile) {
       updatedTool.uploadedFileName = scriptFile.name;
     }
-    tools[idx] = updatedTool;
+    tools[toolIndex] = updatedTool;
     saveTools(tools);
     document.getElementById('successMsg').textContent = 'Tool updated successfully!';
   });
