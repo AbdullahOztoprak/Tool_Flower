@@ -176,6 +176,7 @@ pre {
     <select id="scriptSource" required>
       <option value="code.siemens">code.siemens</option>
       <option value="github">GitHub</option>
+      <option value="ssh">SSH (git clone)</option>
       <option value="upload">Upload File</option>
       <option value="custom">Write Script</option>
     </select>
@@ -196,7 +197,7 @@ pre {
       <textarea id="customScript" rows="6" placeholder="#!/bin/bash\necho Hello"></textarea>
     </div>
     <label for="sshPath">Target Directory on VM (where script will run)</label>
-    <input type="text" id="sshPath" required placeholder="e.g. /home/debianuser/scripts" />
+    <input type="text" id="sshPath" required placeholder="e.g. ~" value="~" />
     <!-- Removed duplicate SSH Public Key section -->
     <!-- Info Modal -->
     <div id="sshKeyInfoModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center;">
@@ -325,6 +326,11 @@ if (!id || !tool) {
       uploadField.style.display = 'none';
       customField.style.display = 'none';
       repoUrlInput.placeholder = 'e.g. https://github.com/your/repo.git';
+    } else if (this.value === 'ssh') {
+      gitFields.style.display = '';
+      uploadField.style.display = 'none';
+      customField.style.display = 'none';
+      repoUrlInput.placeholder = 'e.g. git@github.com:your/repo.git';
     } else if (this.value === 'upload') {
       gitFields.style.display = 'none';
       uploadField.style.display = '';
@@ -361,11 +367,20 @@ if (!id || !tool) {
     if (source === 'custom' && customScript) {
       command = customScript;
     } else if (source === 'github' || source === 'code.siemens') {
-      // Example: git clone and run script
-      command = `git clone ${repoUrl} repo && cd repo && chmod +x ${repoPath} && ./${repoPath}`;
-      if (branchName) {
-        command = `git clone -b ${branchName} ${repoUrl} repo && cd repo && chmod +x ${repoPath} && ./${repoPath}`;
+      // ...existing code...
+      const scriptName = repoPath.split('/').pop() || 'script.sh';
+      let rawUrl = repoUrl;
+      if (repoUrl.includes('github.com')) {
+        rawUrl = repoUrl.replace('github.com', 'raw.githubusercontent.com').replace(/\.git$/, '');
       }
+      const fullRawUrl = rawUrl + (branchName ? `/${branchName}` : '/main') + `/${repoPath}`;
+      command = `mkdir -p ~/Downloads && cd ~/Downloads && pwd && echo "Downloading ${fullRawUrl}" && wget -O ${scriptName} "${fullRawUrl}" && echo "Downloaded ${scriptName}" && ls -la ${scriptName} && chmod +x ${scriptName} && echo "Running ${scriptName}" && bash ${scriptName} && echo "Script completed, checking files:" && ls -la`;
+    } else if (source === 'ssh') {
+      // SSH ile git clone ve script çalıştırma
+      // repoUrl: git@github.com:user/repo.git, repoPath: script adı (ör: test1.sh)
+      const scriptName = repoPath && repoPath !== '' ? repoPath : 'test1.sh';
+      const tempDir = 'toolflower_ssh_' + Math.floor(Math.random()*1000000);
+      command = `cd ~/Downloads && rm -rf ${tempDir} && echo 'Cloning repo...' && git clone --depth 1 '${repoUrl}' ${tempDir} && cd ${tempDir} && echo 'Repo cloned, running script: ${scriptName}' && chmod +x ${scriptName} && bash ${scriptName} && echo 'Script completed. Listing files:' && ls -la && cd ..`;
     } else if (source === 'upload' && scriptFile) {
       // For uploads, backend would need to handle file upload, skipping for now
       command = '';

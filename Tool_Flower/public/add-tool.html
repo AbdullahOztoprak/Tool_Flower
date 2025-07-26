@@ -117,6 +117,12 @@ body {
   font-size: 15px;
   text-align: center;
 }
+.success-msg.success {
+  color: #2ecc40;
+}
+.success-msg.error {
+  color: #e74c3c;
+}
 </style>
 </head>
 <body>
@@ -148,14 +154,17 @@ body {
     <select id="scriptSource" required>
       <option value="code.siemens">code.siemens</option>
       <option value="github">GitHub</option>
+      <option value="ssh">SSH (git clone)</option>
       <option value="upload">Upload File</option>
       <option value="custom">Write Script</option>
     </select>
     <div id="gitFields">
       <label for="repoUrl">Repository URL</label>
       <input type="text" id="repoUrl" placeholder="e.g. https://code.siemens.com/your/repo.git" />
-      <label for="repoPath">Script Path in Repo</label>
-      <input type="text" id="repoPath" placeholder="e.g. setup.sh" />
+      <div id="repoPathGroup">
+        <label for="repoPath">Script Path in Repo</label>
+        <input type="text" id="repoPath" placeholder="e.g. setup.sh" />
+      </div>
     </div>
     <div id="uploadField" style="display:none;">
       <label for="scriptFile">Upload Script File</label>
@@ -166,6 +175,7 @@ body {
       <textarea id="customScript" rows="6" placeholder="#!/bin/bash\necho Hello"></textarea>
     </div>
     <button type="submit">Add Tool</button>
+    <button type="button" onclick="debugFields()" style="background:#f8ffae;color:#43c6ac;margin-top:10px;">🐛 Debug Fields</button>
   </form>
   <div id="successMsg" class="success-msg"></div>
 </div>
@@ -185,16 +195,25 @@ const uploadField = document.getElementById('uploadField');
 const customField = document.getElementById('customField');
 scriptSource.addEventListener('change', function() {
   const repoUrlInput = document.getElementById('repoUrl');
+  const repoPathGroup = document.getElementById('repoPathGroup');
   if (this.value === 'code.siemens') {
     gitFields.style.display = '';
+    repoPathGroup.style.display = '';
     uploadField.style.display = 'none';
     customField.style.display = 'none';
     repoUrlInput.placeholder = 'e.g. https://code.siemens.com/your/repo.git';
   } else if (this.value === 'github') {
     gitFields.style.display = '';
+    repoPathGroup.style.display = '';
     uploadField.style.display = 'none';
     customField.style.display = 'none';
     repoUrlInput.placeholder = 'e.g. https://github.com/your/repo.git';
+  } else if (this.value === 'ssh') {
+    gitFields.style.display = '';
+    repoPathGroup.style.display = 'none';
+    uploadField.style.display = 'none';
+    customField.style.display = 'none';
+    repoUrlInput.placeholder = 'e.g. git@github.com:your/repo.git';
   } else if (this.value === 'upload') {
     gitFields.style.display = 'none';
     uploadField.style.display = '';
@@ -211,16 +230,80 @@ uploadField.style.display = 'none';
 customField.style.display = 'none';
 document.getElementById('repoUrl').placeholder = 'e.g. https://code.siemens.com/your/repo.git';
 
+// Trigger change event to ensure initial state is correct
+scriptSource.dispatchEvent(new Event('change'));
+
+// Debug function
+function debugFields() {
+  const source = scriptSource.value;
+  const customScript = document.getElementById('customScript').value.trim();
+  const name = document.getElementById('toolName').value.trim();
+  const desc = document.getElementById('toolDesc').value.trim();
+  
+  alert(`Debug Info:
+Selected Source: ${source}
+Custom Script: "${customScript}"
+Name: "${name}"
+Description: "${desc}"
+Custom Field Visible: ${customField.style.display !== 'none'}
+Git Fields Visible: ${gitFields.style.display !== 'none'}
+Upload Field Visible: ${uploadField.style.display !== 'none'}`);
+}
+
 document.getElementById('toolForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const name = document.getElementById('toolName').value.trim();
   const desc = document.getElementById('toolDesc').value.trim();
   const source = scriptSource.value;
   const repoUrl = document.getElementById('repoUrl').value.trim();
-  const repoPath = document.getElementById('repoPath').value.trim();
+  let repoPath = '';
+  if (source !== 'ssh') {
+    repoPath = document.getElementById('repoPath').value.trim();
+  }
   const customScript = document.getElementById('customScript').value.trim();
   const scriptFile = document.getElementById('scriptFile').files[0];
-  if (!name || !desc) return;
+  
+  // Debug logging
+  console.log('Form submission debug:');
+  console.log('Name:', name);
+  console.log('Description:', desc);
+  console.log('Source:', source);
+  console.log('Custom Script:', customScript);
+  console.log('Repo URL:', repoUrl);
+  console.log('Repo Path:', repoPath);
+  
+  // Clear previous messages
+  document.getElementById('successMsg').textContent = '';
+  document.getElementById('successMsg').classList.remove('success', 'error');
+  
+  // Validate required fields
+  if (!name || !desc) {
+    document.getElementById('successMsg').textContent = 'Please fill in both Tool Name and Description';
+    document.getElementById('successMsg').classList.add('error');
+    return;
+  }
+  
+  // Validate script source specific requirements
+  if (source === 'custom' && !customScript) {
+    document.getElementById('successMsg').textContent = 'Please write your custom script';
+    document.getElementById('successMsg').classList.add('error');
+    return;
+  }
+  if ((source === 'github' || source === 'code.siemens') && (!repoUrl || !repoPath)) {
+    document.getElementById('successMsg').textContent = 'Please provide both Repository URL and Script Path';
+    document.getElementById('successMsg').classList.add('error');
+    return;
+  }
+  if (source === 'ssh' && !repoUrl) {
+    document.getElementById('successMsg').textContent = 'Please provide the SSH Repository URL';
+    document.getElementById('successMsg').classList.add('error');
+    return;
+  }
+  if (source === 'upload' && !scriptFile) {
+    document.getElementById('successMsg').textContent = 'Please select a file to upload';
+    document.getElementById('successMsg').classList.add('error');
+    return;
+  }
   // Generate a unique id for the tool
   const id = 'tool_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
   let tool = { id, name, desc, source, repoUrl, repoPath, customScript };
@@ -233,6 +316,7 @@ document.getElementById('toolForm').addEventListener('submit', function(e) {
   tools.push(tool);
   saveTools(tools);
   document.getElementById('successMsg').textContent = 'Tool added successfully!';
+  document.getElementById('successMsg').classList.add('success');
   document.getElementById('toolForm').reset();
   // Reset fields to default
   gitFields.style.display = '';

@@ -36,12 +36,33 @@ app.get('/api/tools', (req, res) => {
 
 // Run a tool by command (sent from frontend)
 app.post('/api/run', (req, res) => {
-    const { command } = req.body;
+    const { command, sshUser, sshHost, sshPath } = req.body;
     if (!command) return res.status(400).json({ error: 'No command provided' });
-    exec(command, (error, stdout, stderr) => {
-        if (error) return res.json({ error: stderr });
-        res.json({ output: stdout });
-    });
+    
+    // If SSH details provided, run on remote server
+    if (sshUser && sshHost && sshPath) {
+        const sshCommand = `ssh -i C:/Users/z0055r2k/.ssh/id_rsa -p 2222 -o BatchMode=yes -o ConnectTimeout=10 ${sshUser}@${sshHost} "cd ${sshPath} && ${command}"`;
+        console.log('Executing SSH command:', sshCommand);
+        exec(sshCommand, { timeout: 120000 }, (error, stdout, stderr) => { // 2 minute timeout
+            if (error) {
+                console.log('SSH Error:', stderr || error.message);
+                return res.json({ error: `SSH execution failed: ${stderr || error.message}` });
+            }
+            console.log('SSH Output:', stdout);
+            res.json({ output: stdout });
+        });
+    } else {
+        // Run locally if no SSH details
+        console.log('Executing local command:', command);
+        exec(command, { timeout: 120000 }, (error, stdout, stderr) => { // 2 minute timeout
+            if (error) {
+                console.log('Local Error:', stderr || error.message);
+                return res.json({ error: `Local execution failed: ${stderr || error.message}` });
+            }
+            console.log('Local Output:', stdout);
+            res.json({ output: stdout });
+        });
+    }
 });
 
 app.listen(PORT, () => {
