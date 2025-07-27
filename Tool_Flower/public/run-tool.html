@@ -1,413 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Run Tool - Tool Flower</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<style>
-body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background: linear-gradient(135deg, #f8ffae, #43c6ac);
-  margin: 0;
-  padding: 0;
-  color: #333;
-}
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 50px;
-  position: sticky;
-  top: 0;
-  background-color: rgba(255,255,255,0.9);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  z-index: 999;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  font-size: 1.8em;
-  font-weight: bold;
-  letter-spacing: 2px;
-  color: #43c6ac;
-  background: none;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-  outline: none;
-  transition: color 0.2s, text-shadow 0.2s;
-}
-.logo span {
-  margin-right: 10px;
-}
-.logo:focus, .logo:hover {
-  color: #2d8f7b;
-  text-shadow: 0 2px 8px #43c6ac44;
-  outline: none;
-}
-.nav-buttons button {
-  background-color: #43c6ac;
-  border: none;
-  margin-left: 10px;
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #fff;
-  font-weight: 600;
-  transition: all 0.3s;
-}
-.nav-buttons button:hover {
-  background: #f8ffae;
-  color: #43c6ac;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-.run-tool-container {
-  max-width: 500px;
-  margin: 60px auto;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.17);
-  padding: 40px 30px;
-}
-.run-tool-title {
-  color: #43c6ac;
-  font-size: 2em;
-  margin-bottom: 20px;
-  text-align: center;
-}
-.run-tool-form label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #222;
-}
-.run-tool-form input, .run-tool-form textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 18px;
-  border: none;
-  border-radius: 8px;
-  background: #f0f0f0;
-  font-size: 16px;
-}
-.run-tool-form button {
-  width: 100%;
-  padding: 14px;
-  background: #43c6ac;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  font-weight: 600;
-  margin-top: 10px;
-  transition: background 0.3s;
-}
-.run-tool-form button:hover {
-  background: #f8ffae;
-  color: #43c6ac;
-}
-.success-msg {
-  margin-top: 15px;
-  font-size: 15px;
-  text-align: center;
-}
-.success-msg.success {
-  color: #2ecc40;
-}
-.success-msg.error {
-  color: #e74c3c;
-}
-pre {
-  background: #f8ffae33;
-  color: #222;
-  padding: 10px;
-  border-radius: 6px;
-  margin: 10px 0;
-  font-size: 0.95em;
-  text-align: left;
-  overflow-x: auto;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Tool - Tool Flower</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #f8ffae, #43c6ac);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      position: sticky;
+      top: 0;
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      z-index: 999;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.8em;
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: #43c6ac;
+      background: none;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      outline: none;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .logo span {
+      margin-right: 10px;
+    }
+
+    .logo:focus,
+    .logo:hover {
+      color: #2d8f7b;
+      text-shadow: 0 2px 8px #43c6ac44;
+      outline: none;
+    }
+
+    .nav-buttons button {
+      background-color: #43c6ac;
+      border: none;
+      margin-left: 10px;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .nav-buttons button:hover {
+      background: #f8ffae;
+      color: #43c6ac;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .run-tool-container {
+      max-width: 500px;
+      margin: 60px auto;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.17);
+      padding: 40px 30px;
+    }
+
+    .run-tool-title {
+      color: #43c6ac;
+      font-size: 2em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .run-tool-form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .run-tool-form input,
+    .run-tool-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 18px;
+      border: none;
+      border-radius: 8px;
+      background: #f0f0f0;
+      font-size: 16px;
+    }
+
+    .run-tool-form button {
+      width: 100%;
+      padding: 14px;
+      background: #43c6ac;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    .run-tool-form button:hover {
+      background: #f8ffae;
+      color: #43c6ac;
+    }
+
+    .success-msg {
+      margin-top: 15px;
+      font-size: 15px;
+      text-align: center;
+    }
+
+    .success-msg.success {
+      color: #2ecc40;
+    }
+
+    .success-msg.error {
+      color: #e74c3c;
+    }
+
+    pre {
+      background: #f8ffae33;
+      color: #222;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 0;
+      font-size: 0.95em;
+      text-align: left;
+      overflow-x: auto;
+    }
+  </style>
 </head>
+
 <body>
-<div class="header">
-  <button class="logo" onclick="window.location.href='home.html'">
-    <span style="font-size:1.5em; margin-right:10px;">🌸</span> Tool Flower
-  </button>
-  <div class="nav-buttons">
-    <button onclick="window.location.href='home.html'">Home</button>
-    <button onclick="window.location.href='profile.html'">Profile</button>
-    <button onclick="window.location.href='login.html'">Logout</button>
-  </div>
-</div>
-<!-- Return button moved inside the white box -->
-<div class="run-tool-container">
-  <div style="display:flex;align-items:center;justify-content:flex-start;position:relative;">
-    <button onclick="window.history.back()" id="returnBtn" style="background:#f8ffae;color:#43c6ac;border:none;border-radius:50%;padding:3px 7px;font-weight:600;cursor:pointer;font-size:1.1em;box-shadow:0 1px 4px #43c6ac22;min-width:28px;min-height:28px;display:flex;align-items:center;justify-content:center;">
-      <i class="fa fa-arrow-left"></i>
+  <div class="header">
+    <button class="logo" onclick="window.location.href='home.html'">
+      <span style="font-size:1.5em; margin-right:10px;">🌸</span> Tool Flower
     </button>
-    <span style="display:inline-block;width:16px;"></span>
-    <div class="run-tool-title" style="margin:0;">Run Tool on Remote Device</div>
+    <div class="nav-buttons">
+      <button onclick="window.location.href='home.html'">Home</button>
+      <button onclick="window.location.href='profile.html'">Profile</button>
+      <button onclick="window.location.href='login.html'">Logout</button>
+    </div>
   </div>
-  <div id="toolInfo"></div>
-  <form class="run-tool-form" id="runToolForm">
-    <label for="sshUser">SSH Username</label>
-    <input type="text" id="sshUser" required placeholder="e.g. abdu" />
-    <!-- SSH Host/IP is now fixed to localhost and hidden from user -->
-    <input type="hidden" id="sshHost" value="localhost" />
-    <div style="margin-bottom:18px; margin-top:8px;">
-      <label for="sshPubKey" style="display:inline-block;">Your SSH Public Key</label>
-      <div style="display:flex; justify-content:center; margin:8px 0 6px 0;">
-        <button type="button" id="sshKeyInfoBtn" style="background:none; border:none; color:#43c6ac; font-size:1.1em; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="How to generate and use SSH keys?">
-          <i class="fa fa-info-circle"></i>
-          <span style="font-size:0.98em; color:#43c6ac; text-decoration:underline dotted;">Info</span>
-        </button>
+  <!-- Return button moved inside the white box -->
+  <div class="run-tool-container">
+    <div style="display:flex;align-items:center;justify-content:flex-start;position:relative;">
+      <button onclick="window.history.back()" id="returnBtn"
+        style="background:#f8ffae;color:#43c6ac;border:none;border-radius:50%;padding:3px 7px;font-weight:600;cursor:pointer;font-size:1.1em;box-shadow:0 1px 4px #43c6ac22;min-width:28px;min-height:28px;display:flex;align-items:center;justify-content:center;">
+        <i class="fa fa-arrow-left"></i>
+      </button>
+      <span style="display:inline-block;width:16px;"></span>
+      <div class="run-tool-title" style="margin:0;">Run Tool on Remote Device</div>
+    </div>
+    <div id="toolInfo"></div>
+    <form class="run-tool-form" id="runToolForm">
+      <label for="sshUser">SSH Username</label>
+      <input type="text" id="sshUser" required placeholder="e.g. abdu" />
+      <!-- SSH Host/IP is now fixed to localhost and hidden from user -->
+      <input type="hidden" id="sshHost" value="localhost" />
+      <div style="margin-bottom:18px; margin-top:8px;">
+        <label for="sshPubKey" style="display:inline-block;">Your SSH Public Key</label>
+        <div style="display:flex; justify-content:center; margin:8px 0 6px 0;">
+          <button type="button" id="sshKeyInfoBtn"
+            style="background:none; border:none; color:#43c6ac; font-size:1.1em; cursor:pointer; display:inline-flex; align-items:center; gap:4px;"
+            title="How to generate and use SSH keys?">
+            <i class="fa fa-info-circle"></i>
+            <span style="font-size:0.98em; color:#43c6ac; text-decoration:underline dotted;">Info</span>
+          </button>
+        </div>
+        <textarea id="sshPubKey" rows="3" placeholder="Paste your public key here (e.g. ssh-rsa ...)"></textarea>
       </div>
-      <textarea id="sshPubKey" rows="3" placeholder="Paste your public key here (e.g. ssh-rsa ...)"></textarea>
-    </div>
-    <button type="button" id="testSshBtn" style="background:#f8ffae; color:#43c6ac; margin-bottom:10px; margin-top:5px;">Test Connection</button>
-    <div id="successMsg" class="success-msg"></div>
-    <pre id="outputMsg"></pre>
-    <label for="scriptSource">Script Source</label>
-    <select id="scriptSource" required>
-      <option value="code.siemens">code.siemens</option>
-      <option value="github">GitHub</option>
-      <option value="ssh">SSH (git clone)</option>
-      <option value="upload">Upload File</option>
-      <option value="custom">Write Script</option>
-    </select>
-    <div id="gitFields">
-      <label for="repoUrl">Repository URL</label>
-      <input type="text" id="repoUrl" placeholder="e.g. https://code.siemens.com/your/repo.git" />
-      <label for="branchName">Branch Name (optional)</label>
-      <input type="text" id="branchName" placeholder="e.g. develop or feature/my-branch" />
-      <label for="repoPath">Script Path in Repo</label>
-      <input type="text" id="repoPath" placeholder="e.g. setup.sh" />
-    </div>
-    <div id="uploadField" style="display:none;">
-      <label for="scriptFile">Upload Script File</label>
-      <input type="file" id="scriptFile" accept=".sh,.py,.pl,.rb,.js,.bat,.ps1,.txt" />
-    </div>
-    <div id="customField" style="display:none;">
-      <label for="customScript">Write Script</label>
-      <textarea id="customScript" rows="6" placeholder="#!/bin/bash\necho Hello"></textarea>
-    </div>
-    <label for="sshPath">Target Directory on VM (where script will run)</label>
-    <input type="text" id="sshPath" required placeholder="e.g. ~" value="~" />
-    <!-- Removed duplicate SSH Public Key section -->
-    <!-- Info Modal -->
-    <div id="sshKeyInfoModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center;">
-      <div style="background:#fff; border-radius:12px; max-width:420px; margin:auto; padding:28px 24px 18px 24px; box-shadow:0 8px 32px rgba(31,38,135,0.17); position:relative;">
-        <button id="closeSshKeyInfoModal" style="position:absolute; left:50%; transform:translateX(-50%); top:8px; background:none; border:none; font-size:1.5em; color:#888; cursor:pointer;">&times;</button>
-        <h3 style="color:#43c6ac; margin-top:32px; text-align:center;">How to Generate and Use SSH Keys</h3>
-        <ol style="font-size:1em; color:#333; padding-left:18px;">
-          <li><b>Open a terminal</b> (or PowerShell on Windows).</li>
-          <li><b>Run this command:</b><br><pre style="background:#f8ffae33; padding:7px 10px; border-radius:6px; margin:7px 0; font-size:1em;"><code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code></pre></li>
-          <li>When prompted for a file location, just press <b>Enter</b> to accept the default.</li>
-          <li>When prompted for a passphrase, you can set one (recommended) or leave it empty for no passphrase.</li>
-          <li>Your <b>public key</b> will be saved as:<br>
-            <pre style="background:#f8ffae33; padding:7px 10px; border-radius:6px; margin:7px 0; font-size:1em;"><code>~/.ssh/id_rsa.pub</code> (Linux/Mac)
-<code>C:\Users\\YourName\\.ssh\\id_rsa.pub</code> (Windows)</pre>
-          </li>
-          <li><b>Copy the entire contents</b> of the <code>id_rsa.pub</code> file and paste it into the "Your SSH Public Key" field above.</li>
-          <li>On your VM/server, <b>append</b> your public key to <code>~/.ssh/authorized_keys</code> (create the file if it doesn't exist):<br>
-            <pre style="background:#f8ffae33; padding:7px 10px; border-radius:6px; margin:7px 0; font-size:1em;"><code>cat ~/path/to/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys</code></pre>
-          </li>
-        </ol>
-        <div style="background:#f8ffae33; color:#222; padding:10px; border-radius:6px; font-size:0.97em; margin-top:10px;">
-          <b>Important:</b> <span style="color:#e74c3c;">Never share your private key (<code>id_rsa</code>)</span>. Only share your <b>public key</b> (<code>id_rsa.pub</code>).
+      <button type="button" id="testSshBtn"
+        style="background:#f8ffae; color:#43c6ac; margin-bottom:10px; margin-top:5px;">Test Connection</button>
+      <div id="successMsg" class="success-msg"></div>
+      <pre id="outputMsg"></pre>
+      <label for="scriptSource">Script Source</label>
+      <select id="scriptSource" required>
+        <option value="code.siemens">code.siemens</option>
+        <option value="github">GitHub</option>
+        <option value="ssh">SSH (git clone)</option>
+        <option value="upload">Upload File</option>
+        <option value="custom">Write Script</option>
+      </select>
+      <div id="gitFields">
+        <label for="repoUrl">Repository URL</label>
+        <input type="text" id="repoUrl" placeholder="e.g. https://code.siemens.com/your/repo.git" />
+        <label for="branchName">Branch Name (optional)</label>
+        <input type="text" id="branchName" placeholder="e.g. develop or feature/my-branch" />
+        <label for="repoPath">Script Path in Repo</label>
+        <input type="text" id="repoPath" placeholder="e.g. setup.sh" />
+      </div>
+      <div id="uploadField" style="display:none;">
+        <label for="scriptFile">Upload Script File</label>
+        <input type="file" id="scriptFile" accept=".sh,.py,.pl,.rb,.js,.bat,.ps1,.txt" />
+      </div>
+      <div id="customField" style="display:none;">
+        <label for="customScript">Write Script</label>
+        <textarea id="customScript" rows="6" placeholder="#!/bin/bash\necho Hello"></textarea>
+      </div>
+      <label for="sshPath">Target Directory on VM (where script will run)</label>
+      <input type="text" id="sshPath" required placeholder="e.g. ~" value="~" />
+      <!-- Removed duplicate SSH Public Key section -->
+      <!-- Info Modal -->
+      <div id="sshKeyInfoModal"
+        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center;">
+        <div
+          style="background:#fff; border-radius:12px; max-width:420px; margin:auto; padding:28px 24px 18px 24px; box-shadow:0 8px 32px rgba(31,38,135,0.17); position:relative;">
+          <button id="closeSshKeyInfoModal"
+            style="position:absolute; left:50%; transform:translateX(-50%); top:8px; background:none; border:none; font-size:1.5em; color:#888; cursor:pointer;">&times;</button>
+          <h3 style="color:#43c6ac; margin-top:32px; text-align:center;">How to Use SSH Keys (Short)</h3>
+          <ol style="font-size:1em; color:#333; padding-left:18px;">
+            <li>Open a terminal (or PowerShell).</li>
+            <li>Run:<br>
+              <pre
+                style="background:#f8ffae33; padding:7px 10px; border-radius:6px; margin:7px 0; font-size:1em;"><code>ssh-keygen -t rsa -b 4096 -C "your_email@example.com"</code></pre>
+            </li>
+            <li>Press Enter for the default location and set a passphrase if you want.</li>
+            <li>Your public key is at:<br>
+              <pre style="background:#f8ffae33; padding:7px 10px; border-radius:6px; margin:7px 0; font-size:1em;"><code>~/.ssh/id_rsa.pub</code> (Linux/Mac/VM)
+<code>C:\Users\YourName\.ssh\id_rsa.pub</code> (Windows)</pre>
+            </li>
+            <li>Open and copy all text from <code>id_rsa.pub</code>.<br>
+              <span style="font-size:0.97em;">On Windows, you can use:</span><br>
+              <pre
+                style="background:#f8ffae33; padding:7px 10px; border-radius:6px; margin:7px 0; font-size:1em;"><code>notepad id_rsa.pub</code></pre>
+            </li>
+            <li>On your VM/server, run:<br>
+              <pre style="background:#f8ffae33; padding:7px 10px; border-radius:6px; margin:7px 0; font-size:1em;"><code>cd ~/.ssh/
+nano authorized_keys</code></pre>
+              <span style="font-size:0.97em;">(Paste your PC's public key here and save. For this, you need to generate
+                a key on your VM too. You can simply type <code>ssh-keygen</code> and follow the prompts.)</span><br>
+            </li>
+            <li>Paste your public key into the <b>"authorized_keys"</b> field above.</li>
+            <li>To save and exit nano: Ctrl+O (write), Enter (confirm), Ctrl+X (exit).</li>
+          </ol>
+          <div
+            style="background:#f8ffae33; color:#222; padding:10px; border-radius:6px; font-size:0.97em; margin-top:10px;">
+            <b>Important:</b> <span style="color:#e74c3c;">Never share your private key (<code>id_rsa</code>)</span>.
+            Only share your <b>public key</b> (<code>id_rsa.pub</code>).
+          </div>
         </div>
       </div>
-    </div>
-    <button type="submit">Run Tool</button>
-  </form>
-</div>
-<script>
-// SSH Key Info Modal logic
-document.getElementById('sshKeyInfoBtn').addEventListener('click', function() {
-  document.getElementById('sshKeyInfoModal').style.display = 'flex';
-});
-document.getElementById('closeSshKeyInfoModal').addEventListener('click', function() {
-  document.getElementById('sshKeyInfoModal').style.display = 'none';
-});
-// Backend base URL
-const backendUrl = 'http://localhost:3000';
-// Test SSH connection
-document.getElementById('testSshBtn').addEventListener('click', async function() {
-  const sshUser = document.getElementById('sshUser').value.trim();
-  const sshHost = document.getElementById('sshHost').value.trim(); // always 'localhost'
-  const successMsg = document.getElementById('successMsg');
-  const outputMsg = document.getElementById('outputMsg');
-  successMsg.textContent = '';
-  outputMsg.textContent = '';
-  successMsg.classList.remove('success', 'error');
-  if (!sshUser) {
-    successMsg.textContent = 'Please enter SSH username.';
-    successMsg.classList.add('error');
-    return;
-  }
-  successMsg.textContent = 'Testing connection...';
-  try {
-    const res = await fetch(`${backendUrl}/api/ssh-test`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sshUser, sshHost })
+      <button type="submit">Run Tool</button>
+    </form>
+  </div>
+  <script>
+    // SSH Key Info Modal logic
+    document.getElementById('sshKeyInfoBtn').addEventListener('click', function () {
+      document.getElementById('sshKeyInfoModal').style.display = 'flex';
     });
-    const data = await res.json();
-    if (res.ok && data.output) {
-      successMsg.textContent = 'SSH connection successful!';
-      successMsg.classList.add('success');
-      outputMsg.textContent = data.output;
-    } else {
-      successMsg.textContent = 'SSH connection failed.';
-      successMsg.classList.add('error');
-      outputMsg.textContent = data.error || 'Unknown error.';
+    document.getElementById('closeSshKeyInfoModal').addEventListener('click', function () {
+      document.getElementById('sshKeyInfoModal').style.display = 'none';
+    });
+    // Backend base URL
+    const backendUrl = 'http://localhost:3000';
+    // Test SSH connection
+    document.getElementById('testSshBtn').addEventListener('click', async function () {
+      const sshUser = document.getElementById('sshUser').value.trim();
+      const sshHost = document.getElementById('sshHost').value.trim(); // always 'localhost'
+      const successMsg = document.getElementById('successMsg');
+      const outputMsg = document.getElementById('outputMsg');
+      successMsg.textContent = '';
+      outputMsg.textContent = '';
+      successMsg.classList.remove('success', 'error');
+      if (!sshUser) {
+        successMsg.textContent = 'Please enter SSH username.';
+        successMsg.classList.add('error');
+        return;
+      }
+      successMsg.textContent = 'Testing connection...';
+      try {
+        const res = await fetch(`${backendUrl}/api/ssh-test`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sshUser, sshHost })
+        });
+        const data = await res.json();
+        if (res.ok && data.output) {
+          successMsg.textContent = 'SSH connection successful!';
+          successMsg.classList.add('success');
+          outputMsg.textContent = data.output;
+        } else {
+          successMsg.textContent = 'SSH connection failed.';
+          successMsg.classList.add('error');
+          outputMsg.textContent = data.error || 'Unknown error.';
+        }
+      } catch (err) {
+        successMsg.textContent = 'SSH connection failed.';
+        successMsg.classList.add('error');
+        outputMsg.textContent = err.message;
+      }
+    });
+    function getTools() {
+      return JSON.parse(localStorage.getItem('toolFlowerTools') || '[]');
     }
-  } catch (err) {
-    successMsg.textContent = 'SSH connection failed.';
-    successMsg.classList.add('error');
-    outputMsg.textContent = err.message;
-  }
-});
-function getTools() {
-  return JSON.parse(localStorage.getItem('toolFlowerTools') || '[]');
-}
-function getQueryParam(name) {
-  const url = new URL(window.location.href);
-  return url.searchParams.get(name);
-}
-const id = getQueryParam('id');
-const tools = getTools();
-const tool = tools.find(t => t.id === id);
-if (!id || !tool) {
-  document.getElementById('runToolForm').style.display = 'none';
-  document.getElementById('successMsg').textContent = 'Tool not found.';
-} else {
-  let codeSection = '';
-  if (tool.code && tool.code !== 'undefined') {
-    codeSection = `<pre><strong>Code:</strong>\n${tool.code}</pre>`;
-  }
-  document.getElementById('toolInfo').innerHTML = `
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+    const id = getQueryParam('id');
+    const tools = getTools();
+    const tool = tools.find(t => t.id === id);
+    if (!id || !tool) {
+      document.getElementById('runToolForm').style.display = 'none';
+      document.getElementById('successMsg').textContent = 'Tool not found.';
+    } else {
+      let codeSection = '';
+      if (tool.code && tool.code !== 'undefined') {
+        codeSection = `<pre><strong>Code:</strong>\n${tool.code}</pre>`;
+      }
+      document.getElementById('toolInfo').innerHTML = `
     <h3>${tool.name}</h3>
     <p><strong>Description:</strong> ${tool.desc}</p>
     ${codeSection}
   `;
 
-  // Auto-fill repoUrl and repoPath if present in tool object
-  if (tool.repoUrl) {
-    document.getElementById('repoUrl').value = tool.repoUrl;
-  } else if (tool.url) {
-    document.getElementById('repoUrl').value = tool.url;
-  }
-  if (tool.repoPath) {
-    document.getElementById('repoPath').value = tool.repoPath;
-  } else if (tool.path) {
-    document.getElementById('repoPath').value = tool.path;
-  }
-
-  // Show/hide fields based on script source
-  const scriptSource = document.getElementById('scriptSource');
-  const gitFields = document.getElementById('gitFields');
-  const uploadField = document.getElementById('uploadField');
-  const customField = document.getElementById('customField');
-  scriptSource.addEventListener('change', function() {
-    const repoUrlInput = document.getElementById('repoUrl');
-    if (this.value === 'code.siemens') {
-      gitFields.style.display = '';
-      uploadField.style.display = 'none';
-      customField.style.display = 'none';
-      repoUrlInput.placeholder = 'e.g. https://code.siemens.com/your/repo.git';
-    } else if (this.value === 'github') {
-      gitFields.style.display = '';
-      uploadField.style.display = 'none';
-      customField.style.display = 'none';
-      repoUrlInput.placeholder = 'e.g. https://github.com/your/repo.git';
-    } else if (this.value === 'ssh') {
-      gitFields.style.display = '';
-      uploadField.style.display = 'none';
-      customField.style.display = 'none';
-      repoUrlInput.placeholder = 'e.g. git@github.com:your/repo.git';
-    } else if (this.value === 'upload') {
-      gitFields.style.display = 'none';
-      uploadField.style.display = '';
-      customField.style.display = 'none';
-    } else if (this.value === 'custom') {
-      gitFields.style.display = 'none';
-      uploadField.style.display = 'none';
-      customField.style.display = '';
-    }
-  });
-  // Default to gitFields
-  gitFields.style.display = '';
-  uploadField.style.display = 'none';
-  customField.style.display = 'none';
-  // Set initial placeholder for repoUrl
-  document.getElementById('repoUrl').placeholder = 'e.g. https://code.siemens.com/your/repo.git';
-
-  document.getElementById('runToolForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const sshUser = document.getElementById('sshUser').value.trim();
-    const sshHost = document.getElementById('sshHost').value.trim();
-    const sshPath = document.getElementById('sshPath').value.trim();
-    const source = scriptSource.value;
-    const repoUrl = document.getElementById('repoUrl').value.trim();
-    const repoPath = document.getElementById('repoPath').value.trim();
-    const customScript = document.getElementById('customScript').value.trim();
-    const scriptFile = document.getElementById('scriptFile').files[0];
-    const branchName = document.getElementById('branchName') ? document.getElementById('branchName').value.trim() : '';
-    document.getElementById('successMsg').textContent = '';
-    document.getElementById('outputMsg').textContent = '';
-
-    // Build the command to send to the backend
-    let command = '';
-    if (source === 'custom' && customScript) {
-      command = customScript;
-    } else if (source === 'github' || source === 'code.siemens') {
-      // ...existing code...
-      const scriptName = repoPath.split('/').pop() || 'script.sh';
-      let rawUrl = repoUrl;
-      if (repoUrl.includes('github.com')) {
-        rawUrl = repoUrl.replace('github.com', 'raw.githubusercontent.com').replace(/\.git$/, '');
+      // Auto-fill repoUrl and repoPath if present in tool object
+      if (tool.repoUrl) {
+        document.getElementById('repoUrl').value = tool.repoUrl;
+      } else if (tool.url) {
+        document.getElementById('repoUrl').value = tool.url;
       }
-      const fullRawUrl = rawUrl + (branchName ? `/${branchName}` : '/main') + `/${repoPath}`;
-      command = `mkdir -p ~/Downloads && cd ~/Downloads && pwd && echo "Downloading ${fullRawUrl}" && wget -O ${scriptName} "${fullRawUrl}" && echo "Downloaded ${scriptName}" && ls -la ${scriptName} && chmod +x ${scriptName} && echo "Running ${scriptName}" && bash ${scriptName} && echo "Script completed, checking files:" && ls -la`;
-    } else if (source === 'ssh') {
-      // SSH ile git clone ve script çalıştırma
-      // repoUrl: git@github.com:user/repo.git, repoPath: script adı (ör: test1.sh)
-      const scriptName = repoPath && repoPath !== '' ? repoPath : 'test1.sh';
-      const tempDir = 'toolflower_ssh_' + Math.floor(Math.random()*1000000);
-      command = `cd ~/Downloads && rm -rf ${tempDir} && echo 'Cloning repo...' && git clone --depth 1 '${repoUrl}' ${tempDir} && cd ${tempDir} && echo 'Repo cloned, running script: ${scriptName}' && chmod +x ${scriptName} && bash ${scriptName} && echo 'Script completed. Listing files:' && ls -la && cd ..`;
-    } else if (source === 'upload' && scriptFile) {
-      // For uploads, backend would need to handle file upload, skipping for now
-      command = '';
-    }
+      if (tool.repoPath) {
+        document.getElementById('repoPath').value = tool.repoPath;
+      } else if (tool.path) {
+        document.getElementById('repoPath').value = tool.path;
+      }
 
-    let body = {
-      command,
-      sshUser,
-      sshHost,
-      sshPath
-    };
+      // Show/hide fields based on script source
+      const scriptSource = document.getElementById('scriptSource');
+      const gitFields = document.getElementById('gitFields');
+      const uploadField = document.getElementById('uploadField');
+      const customField = document.getElementById('customField');
+      scriptSource.addEventListener('change', function () {
+        const repoUrlInput = document.getElementById('repoUrl');
+        if (this.value === 'code.siemens') {
+          gitFields.style.display = '';
+          uploadField.style.display = 'none';
+          customField.style.display = 'none';
+          repoUrlInput.placeholder = 'e.g. https://code.siemens.com/your/repo.git';
+        } else if (this.value === 'github') {
+          gitFields.style.display = '';
+          uploadField.style.display = 'none';
+          customField.style.display = 'none';
+          repoUrlInput.placeholder = 'e.g. https://github.com/your/repo.git';
+        } else if (this.value === 'ssh') {
+          gitFields.style.display = '';
+          uploadField.style.display = 'none';
+          customField.style.display = 'none';
+          repoUrlInput.placeholder = 'e.g. git@github.com:your/repo.git';
+        } else if (this.value === 'upload') {
+          gitFields.style.display = 'none';
+          uploadField.style.display = '';
+          customField.style.display = 'none';
+        } else if (this.value === 'custom') {
+          gitFields.style.display = 'none';
+          uploadField.style.display = 'none';
+          customField.style.display = '';
+        }
+      });
+      // Default to gitFields
+      gitFields.style.display = '';
+      uploadField.style.display = 'none';
+      customField.style.display = 'none';
+      // Set initial placeholder for repoUrl
+      document.getElementById('repoUrl').placeholder = 'e.g. https://code.siemens.com/your/repo.git';
 
-    var res = await fetch(`${backendUrl}/api/run`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    const data = await res.json();
-    if (res.ok) {
-      document.getElementById('successMsg').textContent = 'Tool executed!';
-      document.getElementById('outputMsg').textContent = data.output || '';
-    } else {
-      document.getElementById('successMsg').textContent = 'Error running tool.';
-      document.getElementById('outputMsg').textContent = data.error || '';
+      document.getElementById('runToolForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const sshUser = document.getElementById('sshUser').value.trim();
+        const sshHost = document.getElementById('sshHost').value.trim();
+        const sshPath = document.getElementById('sshPath').value.trim();
+        const source = scriptSource.value;
+        const repoUrl = document.getElementById('repoUrl').value.trim();
+        const repoPath = document.getElementById('repoPath').value.trim();
+        const customScript = document.getElementById('customScript').value.trim();
+        const scriptFile = document.getElementById('scriptFile').files[0];
+        const branchName = document.getElementById('branchName') ? document.getElementById('branchName').value.trim() : '';
+        document.getElementById('successMsg').textContent = '';
+        document.getElementById('outputMsg').textContent = '';
+
+        // Build the command to send to the backend
+        let command = '';
+        if (source === 'custom' && customScript) {
+          command = customScript;
+        } else if (source === 'github' || source === 'code.siemens') {
+          // ...existing code...
+          const scriptName = repoPath.split('/').pop() || 'script.sh';
+          let rawUrl = repoUrl;
+          if (repoUrl.includes('github.com')) {
+            rawUrl = repoUrl.replace('github.com', 'raw.githubusercontent.com').replace(/\.git$/, '');
+          }
+          const fullRawUrl = rawUrl + (branchName ? `/${branchName}` : '/main') + `/${repoPath}`;
+          command = `mkdir -p ~/Downloads && cd ~/Downloads && pwd && echo "Downloading ${fullRawUrl}" && wget -O ${scriptName} "${fullRawUrl}" && echo "Downloaded ${scriptName}" && ls -la ${scriptName} && chmod +x ${scriptName} && echo "Running ${scriptName}" && bash ${scriptName} && echo "Script completed, checking files:" && ls -la`;
+        } else if (source === 'ssh') {
+          // SSH ile git clone ve script çalıştırma
+          // repoUrl: git@github.com:user/repo.git, repoPath: script adı (ör: test1.sh)
+          const scriptName = repoPath && repoPath !== '' ? repoPath : 'test1.sh';
+          const tempDir = 'toolflower_ssh_' + Math.floor(Math.random() * 1000000);
+          command = `cd ~/Downloads && rm -rf ${tempDir} && echo 'Cloning repo...' && git clone --depth 1 '${repoUrl}' ${tempDir} && cd ${tempDir} && echo 'Repo cloned, running script: ${scriptName}' && chmod +x ${scriptName} && bash ${scriptName} && echo 'Script completed. Listing files:' && ls -la && cd ..`;
+        } else if (source === 'upload' && scriptFile) {
+          // For uploads, backend would need to handle file upload, skipping for now
+          command = '';
+        }
+
+        let body = {
+          command,
+          sshUser,
+          sshHost,
+          sshPath
+        };
+
+        var res = await fetch(`${backendUrl}/api/run`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('successMsg').textContent = 'Tool executed!';
+          document.getElementById('outputMsg').textContent = data.output || '';
+        } else {
+          document.getElementById('successMsg').textContent = 'Error running tool.';
+          document.getElementById('outputMsg').textContent = data.error || '';
+        }
+      });
     }
-  });
-}
-</script>
+  </script>
 </body>
+
 </html>
